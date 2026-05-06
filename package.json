@@ -1,0 +1,33 @@
+{
+  "name": "environmental-analytics-dashboard",
+  "version": "1.0.0",
+  "description": "IES Building Performance Data Visualization Dashboard",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "server": "node server/index.js",
+    "start": "npm run build && npm run server",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "lucide-react": "^0.263.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.0",
+    "terser": "^5.46.2",
+    "vite": "^4.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
