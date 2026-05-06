@@ -3,8 +3,8 @@ services:
     name: ies-data-viz
     env: node
     plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run server
+    buildCommand: npm ci && npm run build
+    startCommand: node server/index.js
     envVars:
       - key: NODE_ENV
         value: production

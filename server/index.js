@@ -9,15 +9,23 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-console.log(`Server configured to run on port: ${PORT}`);
 const NODE_ENV = process.env.NODE_ENV || 'development';
+
+// Debug logging
+console.log(`Server starting...`);
+console.log(`Current directory: ${process.cwd()}`);
+console.log(`Server directory: ${__dirname}`);
+
+const distPath = path.resolve(__dirname, '../dist');
+console.log(`Serving static files from: ${distPath}`);
+console.log(`Dist folder exists: ${fs.existsSync(distPath)}`);
 
 // CORS
 app.use(cors());
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../dist')));
+app.use(express.static(distPath));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -30,12 +38,16 @@ app.get('/api/health', (req, res) => {
 
 // Serve index.html for all other routes (client-side routing)
 app.get('/', (req, res) => {
-  const indexPath = path.join(__dirname, '../dist/index.html');
-  res.sendFile(indexPath);
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ error: 'index.html not found', path: indexPath });
+  }
 });
 
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, '../dist/index.html');
+  const indexPath = path.join(distPath, 'index.html');
 
   // Check if it's an API route
   if (req.path.startsWith('/api/')) {
@@ -46,7 +58,11 @@ app.get('*', (req, res) => {
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).json({ error: 'Build not found. Run npm run build first.' });
+    res.status(404).json({
+      error: 'Build not found. Run npm run build first.',
+      lookingFor: indexPath,
+      distExists: fs.existsSync(distPath)
+    });
   }
 });
 
