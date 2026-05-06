@@ -13,12 +13,21 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Debug logging
 console.log(`Server starting...`);
-console.log(`Current directory: ${process.cwd()}`);
-console.log(`Server directory: ${__dirname}`);
+console.log(`Current working directory: ${process.cwd()}`);
+console.log(`Server file directory: ${__dirname}`);
 
-const distPath = path.resolve(__dirname, '../dist');
+// Use working directory as the base (this is the project root when running)
+const projectRoot = process.cwd();
+const distPath = path.join(projectRoot, 'dist');
+
 console.log(`Serving static files from: ${distPath}`);
 console.log(`Dist folder exists: ${fs.existsSync(distPath)}`);
+
+// List files in dist directory for debugging
+if (fs.existsSync(distPath)) {
+  const files = fs.readdirSync(distPath);
+  console.log(`Files in dist: ${files.join(', ')}`);
+}
 
 // CORS
 app.use(cors());
