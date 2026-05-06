@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+console.log(`Server configured to run on port: ${PORT}`);
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // CORS
