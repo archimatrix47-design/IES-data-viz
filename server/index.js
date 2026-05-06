@@ -12,22 +12,45 @@ const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Debug logging
-console.log(`Server starting...`);
+console.log(`\n=== Server Starting ===`);
 console.log(`Current working directory: ${process.cwd()}`);
 console.log(`Server file directory: ${__dirname}`);
 
-// Use working directory as the base (this is the project root when running)
-const projectRoot = process.cwd();
-const distPath = path.join(projectRoot, 'dist');
+// Try multiple possible locations for dist
+const possiblePaths = [
+  path.join(process.cwd(), 'dist'),
+  path.join(__dirname, '../dist'),
+  path.join(__dirname, '../../dist'),
+  '/opt/render/project/dist',
+  '/app/dist'
+];
 
-console.log(`Serving static files from: ${distPath}`);
-console.log(`Dist folder exists: ${fs.existsSync(distPath)}`);
+let distPath = null;
+for (const testPath of possiblePaths) {
+  if (fs.existsSync(testPath)) {
+    distPath = testPath;
+    console.log(`✓ Found dist at: ${testPath}`);
+    break;
+  }
+}
 
-// List files in dist directory for debugging
-if (fs.existsSync(distPath)) {
+if (!distPath) {
+  console.error(`✗ Could not find dist folder!`);
+  console.log(`Attempted paths:`);
+  possiblePaths.forEach(p => console.log(`  - ${p}`));
+  process.exit(1);
+}
+
+console.log(`Using distPath: ${distPath}`);
+
+// List files in dist directory
+try {
   const files = fs.readdirSync(distPath);
   console.log(`Files in dist: ${files.join(', ')}`);
+} catch (e) {
+  console.error(`Error reading dist: ${e.message}`);
 }
+console.log(`======================\n`);
 
 // CORS
 app.use(cors());
